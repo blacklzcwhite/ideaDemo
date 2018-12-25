@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.newer.dao.ArticleMapper">
+
+  <resultMap id="article1" type="com.newer.domain.Article">
+      <id property="articleId" column="articleid"/>
+      <result property="title" column="title"/>
+      <result property="content" column="content"/>
+      <association property="author" javaType="com.newer.domain.Author">
+          <id property="id" column="id"/>
+          <result property="name" column="name"/>
+      </association>
+  </resultMap>
+
+
+
+  
+</mapper>  

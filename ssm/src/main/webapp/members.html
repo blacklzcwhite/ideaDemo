@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+
+<div>
+    <form id="form1">
+        <p>
+            姓名<input name="mname">
+            查询卡号<input name="mcardno">
+            <input type="button" value="查询" id="btn1">
+            <input type="button" value="新增" id="btn2">
+        </p>
+
+    </form>
+</div>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th scope="col" colspan="9">会员管理系统</th>
+    </tr>
+
+    <tr class="text-c">
+        <th >序号</th>
+        <th >姓名</th>
+        <th>联系电话</th>
+        <th >会员级别</th>
+        <th >会员卡号</th>
+        <th>入会时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody id="userlist">
+
+    </tbody>
+</table>
+
+<div id="hide" style="display: none;border: 1px solid">
+
+
+</div>
+
+
+
+<script>
+    $(function () {
+        sjonload()//查所有
+
+        //模糊查询
+        $("#btn1").click(function () {
+            $.ajax({
+                url:"members",
+                type:"get",
+                data:$("#form1").serialize(),
+                dataType:"json",
+                success:function (data) {
+                    $("#userlist").empty()
+                    $.each(data,function () {
+                        let $tr = $(`<tr class="text-c"> +
+                        <td>${this.mid}</td> +
+                        <td>${this.mname}</td> +
+                        <td >${this.mphone}</td> +
+                        <td>${this.mlevel}级</td> +
+                        <td>${this.mcardno}</td> +
+                        <td>${this.mintime}</td>+
+                        <td><a onclick="show(${this.mid})">修改</a>
+                        <a onclick="del(${this.mid})">删除</a>
+                        </td></tr>`)
+                        $("#userlist").append($tr)
+                    })
+                }
+            })
+        })
+
+    })
+
+ function del(mid) {
+
+     if(confirm("是否要删除")){
+        $.ajax({
+            url:"members/"+mid,
+            type:"delete",
+            dataType:"json",
+            success:function (data) {
+                if(data.count==1){
+                    alert("删除成功")
+                    location.reload()
+                }else{
+                    alert("删除失败")
+                }
+            }
+
+        })
+     }
+ }
+
+
+    function sjonload() {
+        $.ajax({
+            url:"members",
+            type:"get",
+            dataType:"json",
+            success:function (data) {
+                $("#userlist").empty()
+                $.each(data,function () {
+                    let $tr = $(`<tr class="text-c"> +
+                        <td>${this.mid}</td> +
+                        <td>${this.mname}</td> +
+                        <td >${this.mphone}</td> +
+                        <td>${this.mlevel}级</td> +
+                        <td>${this.mcardno}</td> +
+                        <td>${this.mintime}</td>+
+                        <td><a onclick="show(${this.mid})">修改</a>
+                        <a onclick="del(${this.mid})">删除</a>
+                        </td></tr>`)
+                    $("#userlist").append($tr)
+                })
+            }
+
+        })
+    }
+
+    function show(mid) {
+        $.ajax({
+            url: "members/"+ mid,
+            type: "get",
+            dataType: "json",
+            success: function (data) {
+                    $("#hide").empty()
+                    let $tr = $(`<label>序号:<input id="mid" type="text" value="${data.mid}"/></label><br>
+                        <label>姓名:<input type="text" id="mname" value="${data.mname}"/></label><br>
+                        <label >联系电话:<input type="text" id="mphone"value="${data.mphone}"/></label><br>
+                        <label>用户级别:<input type="text" id="mlevel" value="${data.mlevel}">级</label><br>
+                        <label>会员卡号:<input type="text" id="mcardno" value="${data.mcardno}"></label><br>
+                        <label>入会时间:<input type="text"  id="mintime"value="${data.mintime}"></label><br>
+                        <input type="button" value="修改" onclick="update()">
+                         <input type="button" value="取消" onclick="noShow()">`)
+                        $("#hide").append($tr)
+                        $("#hide").show();
+
+            }
+        })
+    }
+
+    function noShow() {
+        $("#hide").hide()
+    }
+
+    function update() {
+        let obj={_method:"put",mid:$("#mid").val(),mname:$("#mname").val(),mlevel:$("#mlevel").val(),mcardno:$("#mcardno").val(),mintime:$("#mintime").val(),mphone:$("#mphone").val()}
+
+        $.ajax({
+            url:"members",
+            type:"post",
+            data:obj,
+            dataType:"json",
+            success:function (data) {
+                 if(data.count==1){
+                    alert("修改成功")
+                   location.reload()
+                     $("#hide").hide()
+
+                 }else{
+                     alert("修改失败")
+                     location.reload()
+                     $("#hide").hide()
+                 }
+            }
+        })
+    }
+
+
+</script>
+</body>
+</html>
